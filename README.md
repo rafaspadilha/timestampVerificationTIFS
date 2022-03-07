@@ -20,7 +20,7 @@ In case you have any doubts, shoot us an email! We will be glad to help and/or a
 > Most pictures shared online are accompanied by temporal metadata (i.e., the day and time they were taken),  which makes it possible to associate an image content with real-world events. Maliciously manipulating this metadata can convey a distorted version of reality. In this work, we present the emerging problem of detecting timestamp manipulation. We propose an end-to-end approach to verify whether the purported time of capture of an outdoor image is consistent with its content and geographic location. We consider manipulations done in the hour and/or month of capture of a photograph. The central idea is the use of supervised consistency verification, in which we predict the probability that the image content, capture time, and geographical location are consistent. We also include a pair of auxiliary tasks, which can be used to explain the network decision. Our approach improves upon previous work on a large benchmark dataset, increasing the classification accuracy from 59.0% to 81.1%. We perform an ablation study that highlights the importance of various components of the method, showing what types of tampering are detectable using our approach. Finally, we demonstrate how the proposed method can be employed to estimate a possible time-of-capture in scenarios in which the timestamp is missing from the metadata.
 
 
-![alt text](https://github.com/rafaspadilha/temporal-sorting-event/blob/main/featured.png)
+![alt text](https://github.com/rafaspadilha/timestampVerificationTIFS/blob/main/network_architecture.png)
 
 
 
