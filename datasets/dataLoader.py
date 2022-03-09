@@ -140,10 +140,13 @@ def preprocess_time(time):
 ##################################################
 
 class DataLoader(object):
-    def __init__(self, setToLoad="train"):
+    def __init__(self, setToLoad="train", includeLocation=True, includeSatellite=True, outputTransientAttributes=True):
         assert setToLoad in ["train", "test"]
 
         self.set = setToLoad
+        self.includeLocation = includeLocation
+        self.includeSatellite = includeSatellite
+        self.outputTA = outputTransientAttributes
         self.setup()
 
     #### Setup paths and preload dataset file
@@ -200,6 +203,7 @@ class DataLoader(object):
     
     def loadImagesInBatches(self, batchSize):
         # Initialize arrays to store each input modality and labels
+        inputBatch, outputBatch = [], []
         gBatch, aBatch, tBatch, lBatch, labels, transAtt = [], [], [], [], [], []
 
         # Count the number of samples in the batch
@@ -213,21 +217,36 @@ class DataLoader(object):
 
             for idx in rndIdx:
 
-                # Load and preprocess ground-level and aerial images
+                # Load and preprocess ground-level image
                 try:
                     gImg = load_preprocess_groundImg(self.groundPaths[idx])
-                    aImg = load_preprocess_aerialImg(self.aerialPaths[idx])
                 except (OSError, IOError) as e:
                     #If error in loading, go to the next sample
                     continue
+
+                # Load and preprocess satellite image
+                if self.includeSatellite:
+                    try:
+                        aImg = load_preprocess_aerialImg(self.aerialPaths[idx])
+                    except (OSError, IOError) as e:
+                        #If error in loading, go to the next sample
+                        continue
                 
                 # Include each image in the batch twice (consistent and inconsistent)
                 gBatch += [gImg, gImg]
-                aBatch += [aImg, aImg]
+
+                if self.includeSatellite:
+                    aBatch += [aImg, aImg]
+
+
+
 
                 #Add the location information to the batch
-                loc = preprocess_loc(self.locLabels[idx])
-                lBatch += [loc, loc]    
+                if self.includeLocation:
+                    loc = preprocess_loc(self.locLabels[idx])
+                    lBatch += [loc, loc]    
+
+
 
                 #Process time info and tamper the time for one pair
                 time = preprocess_time(self.timeLabels[idx])
@@ -239,12 +258,22 @@ class DataLoader(object):
                 labels += [to_categorical(0, num_classes=2), to_categorical(1, num_classes=2)]
 
                 # Add the transient attributes to the output
-                transAtt += [self.transientAttributes[idx], self.transientAttributes[idx]]
+                if self.outputTA:
+                    transAtt += [self.transientAttributes[idx], self.transientAttributes[idx]]
 
                 nInBatch += 2
                 if nInBatch >= batchSize:
-                    yield [np.array(gBatch), np.array(aBatch), np.array(lBatch), np.array(tBatch)], [np.array(labels), np.array(transAtt), np.array(transAtt)]
+                    inputBatch = [np.array(gBatch)]
+                    inputBatch += [np.array(aBatch)] if self.includeSatellite else []
+                    inputBatch += [np.array(lBatch)] if self.includeLocation else []
+                    inputBatch += [np.array(tBatch)]
+
+                    outputBatch = [np.array(labels)]
+                    outputBatch += [np.array(transAtt), np.array(transAtt)] if self.outputTA else []
+
+                    yield inputBatch, outputBatch
                     gBatch, aBatch, tBatch, lBatch, labels, transAtt = [], [], [], [], [], []
+                    inputBatch, outputBatch = [], []
                     nInBatch = 0
 
 
@@ -254,6 +283,7 @@ class DataLoader(object):
     # to make sure all experiments are done with the same set
     def loadTestDataInBatches(self, batchSize, seed=42):
         # Initialize arrays to store each input modality and labels
+        inputBatch, outputBatch = [], []
         gBatch, aBatch, tBatch, lBatch, labels, transAtt = [], [], [], [], [], []
 
         # Count the number of samples in the batch
@@ -264,21 +294,32 @@ class DataLoader(object):
 
         idxList = range(len(self.groundPaths))
         for idx in idxList:
-                # Load and preprocess ground-level and aerial images
+
+                # Load and preprocess ground-level image
                 try:
                     gImg = load_preprocess_groundImg(self.groundPaths[idx])
-                    aImg = load_preprocess_aerialImg(self.aerialPaths[idx])
                 except (OSError, IOError) as e:
                     #If error in loading, go to the next sample
                     continue
 
+                # Load and preprocess satellite image
+                if self.includeSatellite:
+                    try:
+                        aImg = load_preprocess_aerialImg(self.aerialPaths[idx])
+                    except (OSError, IOError) as e:
+                        #If error in loading, go to the next sample
+                        continue
+
                 # Include each image in the batch twice (consistent and inconsistent)
                 gBatch += [gImg, gImg]
-                aBatch += [aImg, aImg]
+
+                if self.includeSatellite:
+                    aBatch += [aImg, aImg]
 
                 #Add the location information to the batch
-                loc = preprocess_loc(self.locLabels[idx])
-                lBatch += [loc, loc]    
+                if self.includeLocation:
+                    loc = preprocess_loc(self.locLabels[idx])
+                    lBatch += [loc, loc]
 
                 #Process time info and tamper the time for one pair
                 time = preprocess_time(self.timeLabels[idx])
@@ -287,20 +328,46 @@ class DataLoader(object):
 
                 #Label 0 = real/consistent tuple
                 #Label 1 = tampered/inconsistent tuple
-                labels += [to_categorical(0, num_classes=2), to_categorical(1, num_classes=2)]
+                labels += [to_categorical(0, num_classes=2),
+                           to_categorical(1, num_classes=2)]
 
                 # Add the transient attributes to the output
-                transAtt += [self.transientAttributes[idx], self.transientAttributes[idx]]
+                if self.outputTA:
+                    transAtt += [self.transientAttributes[idx],
+                                 self.transientAttributes[idx]]
 
                 nInBatch += 2
                 if nInBatch >= batchSize:
-                    yield [np.array(gBatch), np.array(aBatch), np.array(lBatch), np.array(tBatch)], [np.array(labels), np.array(transAtt), np.array(transAtt)]
+                    inputBatch = [np.array(gBatch)]
+                    inputBatch += [np.array(aBatch)
+                                   ] if self.includeSatellite else []
+                    inputBatch += [np.array(lBatch)
+                                   ] if self.includeLocation else []
+                    inputBatch += [np.array(tBatch)]
+
+                    outputBatch = [np.array(labels)]
+                    outputBatch += [np.array(transAtt),
+                                    np.array(transAtt)] if self.outputTA else []
+
+                    yield inputBatch, outputBatch
                     gBatch, aBatch, tBatch, lBatch, labels, transAtt = [], [], [], [], [], []
+                    inputBatch, outputBatch = [], []
                     nInBatch = 0
 
         #Yield the final batch, if smaller than batchSize
         if nInBatch > 0:
-            yield [np.array(gBatch), np.array(aBatch), np.array(lBatch), np.array(tBatch)], [np.array(labels), np.array(transAtt), np.array(transAtt)]
+            inputBatch = [np.array(gBatch)]
+            inputBatch += [np.array(aBatch)
+                            ] if self.includeSatellite else []
+            inputBatch += [np.array(lBatch)
+                            ] if self.includeLocation else []
+            inputBatch += [np.array(tBatch)]
+
+            outputBatch = [np.array(labels)]
+            outputBatch += [np.array(transAtt),
+                            np.array(transAtt)] if self.outputTA else []
+
+            yield inputBatch, outputBatch
 
 
 
