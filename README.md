@@ -38,11 +38,11 @@ The codes were implemented and tested with the following libraries/packages:
 
 | Package / Library        | Version           | 
 | ------------- |-------------| 
-| Python | xxxxx | 
-| Numpy | xxxxx | 
-| Scikit Learn | xxxxx | 
-| Keras | xxxxxx | 
-| Tensorflow | xxxxxx | 
+| Python | 3.6.9 | 
+| Numpy | 1.18.5 | 
+| Scikit Learn | 0.24.2 | 
+| Tensorflow | 2.2.3 |
+| h5py | 2.10.0 | 
 
 
 
