@@ -11,19 +11,19 @@ Testing script considering DenseNet as backbone.
 The model path and the modalities are passed as arguments to the script.
 
 Usage:
-	$ python test.py model_path modality_id
+    $ python test.py model_path modality_id
 
 Parameters:
-	model_path: the path to the model hdf5 file
-	modality_id: integer from 1 to 5
-		1: Ground-level image and timestamp
-		2: Ground-level image, location, timestamp
-		3: Ground-level image, sattelite image, timestamp
-		4: All modalities
-		5: All modalities + Transient Attribute Estimation
+    model_path: the path to the model hdf5 file
+    modality_id: integer from 1 to 5
+        1: Ground-level image and timestamp
+        2: Ground-level image, location, timestamp
+        3: Ground-level image, sattelite image, timestamp
+        4: All modalities
+        5: All modalities + Transient Attribute Estimation
 
 Example:
-	$ python test.py ./gr_oh_loc_time_TA/weights.30-0.57407.hdf5 5
+    $ python test.py ./gr_oh_loc_time_TA/weights.30-0.57407.hdf5 5
 """
 
 
@@ -100,9 +100,9 @@ includeSatellite = modalityID in [3, 4, 5]
 outputTA = modalityID in [5]
 
 dl = DataLoader(setToLoad="test", 
-				includeLocation=includeLocation, 
+                includeLocation=includeLocation, 
                 includeSatellite=includeSatellite, 
-				outputTransientAttributes=outputTA)
+                outputTransientAttributes=outputTA)
 
 
 ### List to store the statistics for each run
@@ -112,48 +112,48 @@ tRealRate = []
 aucList = []
 
 for runIdx in range(nRuns):
-	print("\n\nRun --> ", runIdx+1, " / ", nRuns)
-	yTrueList, yPredList, yScoreList = [], [], []
-	for batch, labels in dl.loadTestDataInBatches(batchSize, seed=runIdx*42):
+    print("\n\nRun --> ", runIdx+1, " / ", nRuns)
+    yTrueList, yPredList, yScoreList = [], [], []
+    for batch, labels in dl.loadTestDataInBatches(batchSize, seed=runIdx*42):
 
-		if outputTA:
-			preds = model.predict_on_batch(batch)[0] # get only the consistOrNot Branch
-			y_true = np.argmax(labels[0], axis=1)  # get only the consistOrNot Labels
-		else:
-			preds = model.predict_on_batch(batch)
-			y_true = np.argmax(labels, axis=1)
+        if outputTA:
+            preds = model.predict_on_batch(batch)[0] # get only the consistOrNot Branch
+            y_true = np.argmax(labels[0], axis=1)  # get only the consistOrNot Labels
+        else:
+            preds = model.predict_on_batch(batch)
+            y_true = np.argmax(labels, axis=1)
 
-		
-		y_pred = np.argmax(preds, axis=1)
+        
+        y_pred = np.argmax(preds, axis=1)
 
-		yTrueList += list(y_true)
-		yPredList += list(y_pred)
-		yScoreList += [p[1] for p in preds]
+        yTrueList += list(y_true)
+        yPredList += list(y_pred)
+        yScoreList += [p[1] for p in preds]
 
 
-	acc = accuracy_score(yTrueList, yPredList)
-	cm = confusion_matrix(yTrueList, yPredList)
-	trr = cm[0,0] / float(np.sum(cm[0,:]))
-	ttr = cm[1,1] / float(np.sum(cm[1,:]))
+    acc = accuracy_score(yTrueList, yPredList)
+    cm = confusion_matrix(yTrueList, yPredList)
+    trr = cm[0,0] / float(np.sum(cm[0,:]))
+    ttr = cm[1,1] / float(np.sum(cm[1,:]))
 
-	print("Acc = ", acc)
-	print("True Real Rate = ", trr)
-	print("True Tampered Rate = ", ttr)
-	print("Conf Matrix")
-	print(cm)
+    print("Acc = ", acc)
+    print("True Real Rate = ", trr)
+    print("True Tampered Rate = ", ttr)
+    print("Conf Matrix")
+    print(cm)
 
-	accList += [acc]
-	tTamperedRate += [ttr]
-	tRealRate += [trr]
+    accList += [acc]
+    tTamperedRate += [ttr]
+    tRealRate += [trr]
 
-	fpr, tpr, _ = roc_curve(yTrueList, yScoreList)
-	roc_auc = auc(fpr, tpr)
+    fpr, tpr, _ = roc_curve(yTrueList, yScoreList)
+    roc_auc = auc(fpr, tpr)
 
-	aucList += [roc_auc]
-	print("AUC = ", roc_auc)
+    aucList += [roc_auc]
+    print("AUC = ", roc_auc)
 
-	print(fpr.shape, tpr.shape, np.array([fpr, tpr]).shape)
-	np.save(os.path.join(pathToSaveRocs,"fpr_tpr_run_" + str(runIdx)), np.array([fpr, tpr]))
+    print(fpr.shape, tpr.shape, np.array([fpr, tpr]).shape)
+    np.save(os.path.join(pathToSaveRocs,"fpr_tpr_run_" + str(runIdx)), np.array([fpr, tpr]))
 
 
 

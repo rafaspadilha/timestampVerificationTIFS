@@ -42,7 +42,12 @@ The codes were implemented and tested with the following libraries/packages:
 | Numpy | 1.18.5 | 
 | Scikit Learn | 0.24.2 | 
 | Tensorflow | 2.2.3 |
-| h5py | 2.10.0 | 
+| SciPy | 1.0.0 |
+| h5py | 2.10.0 |
+| tqdm | 4.63.0 |
+| pyproj | 2.2.2 |
+| matplotlib | 2.1.1 | 
+
 
 
 
