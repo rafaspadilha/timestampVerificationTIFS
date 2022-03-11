@@ -66,6 +66,49 @@ Use the **Project Structure** bellow to help you.
 ## Project Structure
 
 ```
-To be added
+timestampVerificationTIFS
+├── architectures
+├── datasets
+│   ├── CVT_dataset
+│   │   ├── aerial
+│   │   └── ground_level
+│   │       ├── YFCC100M-PHONE
+│   │       └── webcam-labeler
+│   └── Cross_Camera_split
+│       ├── train_test
+│       └── train_val_test
+├── paper_evaluation
+│   ├── IV.B_ablation_study
+│   │   ├── densenet
+│   │   │   ├── gr_loc_time
+│   │   │   ├── gr_oh_loc_time
+│   │   │   ├── gr_oh_loc_time_TA
+│   │   │   ├── gr_oh_time
+│   │   │   └── gr_time
+│   │   ├── resnet
+│   │   │   ├── gr_loc_time
+│   │   │   ├── gr_oh_loc_time
+│   │   │   ├── gr_oh_loc_time_TA
+│   │   │   ├── gr_oh_time
+│   │   │   └── gr_time
+│   │   └── vgg_resnet
+│   │       ├── gr_loc_time
+│   │       ├── gr_oh_loc_time
+│   │       ├── gr_oh_loc_time_TA
+│   │       ├── gr_oh_time
+│   │       └── gr_time
+│   ├── IV.D_sensitivity_scene_appearance
+│   ├── IV.E_sensitivity_timestamp_manipulation
+│   ├── IV.F_sensitivity_geographic_location
+│   ├── IV.G_time_estimation
+│   ├── IV.H_tampering_telltales
+│   ├── IV.I_transAttr_influence__SupMat_VII
+│   └── _SupMat_III_satellite_exploration
+└── training_testing
+    └── models
 ```
 
+- `architectures`: Example files of the definitions of each architecture considered in our work;
+- `datasets`: Examples files of a dataLoader, dummy directory structure for the dataset, and information about the Cross-Camera organization of CVT;
+- `paper_evaluation`: Codes and jupyter notebooks of the experiments done in the paper;
+- `training_testing`: Example files to train and test the models of our work (if you want to build on top of this work, probably this is the place to start);
