@@ -8,7 +8,7 @@ Repository with code and (pointers to) model weights for the paper:
 >
 >IEEE Transactions on Information Forensics and Security
 >
->DOI: [https://github.com/rafaspadilha/timestampVerificationTIFS](TBD)
+>DOI: [https://doi.org/10.1109/TIFS.2022.3159154](https://doi.org/10.1109/TIFS.2022.3159154)
 
 Please, if you use or build upon this code, cite the publication above. 
 
@@ -57,7 +57,7 @@ The codes were implemented and tested with the following libraries/packages:
 
 The **dataset** can be found at [CVT website](https://tsalem.github.io/DynamicMaps/). The tampered timestamps are included in the `dataset` folder.
 
-The **model weights** can be found in this [Google Drive folder](). 
+The **model weights** can be found in this [Google Drive folder](https://drive.google.com/drive/folders/1wZNAhBBcz78OQO9U1n6I7zDY1K5lc_iw?usp=sharing). 
 
 Use the **Project Structure** bellow to help you. 
 
