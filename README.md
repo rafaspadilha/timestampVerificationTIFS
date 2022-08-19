@@ -2,9 +2,9 @@
 Repository with code and (pointers to) model weights for the paper: 
 
 
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/content-aware-detection-of-temporal-metadata/temporal-metadata-manipulation-detection-on)](https://paperswithcode.com/sota/temporal-metadata-manipulation-detection-on?p=content-aware-detection-of-temporal-metadata)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/content-based-detection-of-temporal-metadata/temporal-metadata-manipulation-detection-on)](https://paperswithcode.com/sota/temporal-metadata-manipulation-detection-on?p=content-based-detection-of-temporal-metadata)
 
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/content-aware-detection-of-temporal-metadata/temporal-metadata-manipulation-detection-on-1)](https://paperswithcode.com/sota/temporal-metadata-manipulation-detection-on-1?p=content-aware-detection-of-temporal-metadata)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/content-based-detection-of-temporal-metadata/temporal-metadata-manipulation-detection-on-1)](https://paperswithcode.com/sota/temporal-metadata-manipulation-detection-on-1?p=content-based-detection-of-temporal-metadata)
 
 
 
